@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.7.21",
-    "dotenv": "^4.0.0"
+    "dotenv": "^4.0.0",
+    "ft-poller": "^2.9.0"
   }
 }
