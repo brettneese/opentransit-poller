@@ -1,3 +1,4 @@
+process.env.TZ = 'UTC' 
 require('dotenv').config();
 
 const Poller = require('ft-poller'), 
@@ -13,11 +14,14 @@ const p = new Poller({
 })
 
 // Create the bucket if it does not exist, and start the poller 
-const bucket = env.ENVIRONMENT + '.opentransit.' + env.PROVIDER
+const bucket = 'com.opentransit.' + env.ENVIRONMENT + '.' + env.PROVIDER
 const s3 = new aws.S3({ apiVersion: '2006-03-01' }) 
 s3.createBucket( {Bucket: bucket}, function (err, data) {
-    if (err)
+    if (err) {
         console.log(err, err.stack) // an error occurred
+        process.exit(1);
+    }
+
     else {
         p.start()
     }
@@ -25,16 +29,32 @@ s3.createBucket( {Bucket: bucket}, function (err, data) {
 
 // Send data to s3
 const sendToS3 = function (data) {
-    var params = { Bucket: bucket, Key: Date.now() + ".json", Body: JSON.stringify(data) }
-    
-    s3.upload(params, function (err, data) {
+
+    var date = new Date(Date.now()),
+        minute = date.getUTCSeconds(),
+        minute = date.getUTCMinutes(),
+        hour = date.getUTCHours(),
+        day = date.getUTCDay(),
+        month = date.getUTCMonth(),
+        year = date.getUTCFullYear(),
+        second = date.getUTCSeconds();
+        millisecond = date.getUTCMilliseconds();
+        key = [year, month, day, hour, minute, second, millisecond].join("/") + ".json"
+
+    s3.upload({ Bucket: bucket, Key: key, Body: JSON.stringify(data)}, function (err, data) {
         console.log(err, data)
     })
 
-    console.log(data)
+    console.log('data added')
+}
+
+const error = function(error){
+    console.log(error);
+    return process.exit(1);
 }
 
 p.on('data', sendToS3)
+p.on('error', error)
 
 // A simple status page
 const requestHandler = (request, response) => {  
@@ -47,7 +67,8 @@ const server = http.createServer(requestHandler)
 
 server.listen(port, (err) => {  
   if (err) {
-    return console.log('something bad happened', err)
+    console.log('something bad happened', err)
+    return process.exit(1);
   }
 
   console.log(`server is listening on ${port}`)
