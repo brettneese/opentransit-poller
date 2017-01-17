@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.7.21",
     "dotenv": "^4.0.0",
-    "ft-poller": "^2.9.0"
+    "ft-poller": "^2.9.0",
+    "md5": "^2.2.1"
   }
 }

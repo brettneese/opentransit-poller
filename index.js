@@ -4,6 +4,7 @@ require('dotenv').config();
 const Poller = require('ft-poller'), 
       aws = require('aws-sdk'),
       http = require('http'), 
+      md5 = require('md5')
       port = 8080,
       env = process.env
 
@@ -38,13 +39,17 @@ const sendToS3 = function (data) {
         day = date.getUTCDate(),
         month = date.getUTCMonth(),
         year = date.getUTCFullYear(),
-        key = [year, month, day, hour, minute, second, millisecond].join("/") + ".json"
+        key = [year, month, day, hour, minute].join("/") + md5(data) + ".json"
 
-    s3.upload({ Bucket: bucket, Key: key, Body: JSON.stringify(data)}, function (err, data) {
-        console.log(err, data)
+    s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
+        if (data){
+            console.log('data added')
+        }
+        
+        if(err){
+            console.log(err)
+        }
     })
-
-    console.log('data added')
 }
 
 const error = function(error){
