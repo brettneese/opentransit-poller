@@ -31,14 +31,13 @@ s3.createBucket( {Bucket: bucket}, function (err, data) {
 const sendToS3 = function (data) {
 
     var date = new Date(Date.now()),
-        minute = date.getUTCSeconds(),
+        millisecond = date.getUTCMilliseconds(),
+        second = date.getUTCSeconds(),
         minute = date.getUTCMinutes(),
         hour = date.getUTCHours(),
         day = date.getUTCDay(),
         month = date.getUTCMonth(),
         year = date.getUTCFullYear(),
-        second = date.getUTCSeconds();
-        millisecond = date.getUTCMilliseconds();
         key = [year, month, day, hour, minute, second, millisecond].join("/") + ".json"
 
     s3.upload({ Bucket: bucket, Key: key, Body: JSON.stringify(data)}, function (err, data) {
