@@ -1,4 +1,3 @@
-process.env.TZ = 'UTC' 
 require('dotenv').config();
 
 const Poller = require('ft-poller'), 
@@ -39,17 +38,19 @@ const sendToS3 = function (data) {
         day = date.getUTCDate(),
         month = date.getUTCMonth(),
         year = date.getUTCFullYear(),
-        key = [year, month, day, hour, minute].join("/") + md5(data) + ".json"
-
-    s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
-        if (data){
-            console.log('data added')
-        }
-        
-        if(err){
-            console.log(err)
-        }
-    })
+        key = [year, month, day, hour, minute].join("/") + md5(data)
+    
+    if(env.ENVIRONMENT !== 'local'){
+        s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
+            if (data){
+                console.log('data added')
+            }
+            
+            if(err){
+                console.log(err)
+            }
+        })
+    }
 }
 
 const error = function(error){
