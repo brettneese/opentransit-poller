@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const Poller = require('ft-poller'), 
-      knox = require('knox'), 
       aws = require('aws-sdk'),
       http = require('http'), 
       port = 8080,
