@@ -38,7 +38,7 @@ const sendToS3 = function (data) {
         day = date.getUTCDate(),
         month = date.getUTCMonth(),
         year = date.getUTCFullYear(),
-        key = [year, month, day, hour, minute].join("/") + md5(data)
+        key = 'raw' + '/' + [year, month, day, hour, minute].join("/") + md5(data)
     
     if(env.ENVIRONMENT !== 'local'){
         s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
