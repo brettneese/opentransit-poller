@@ -41,6 +41,7 @@ const sendToS3 = function (data) {
         key = 'raw' + '/' + [year, month, day, hour, minute].join("/") + md5(data)
     
     if(env.ENVIRONMENT !== 'local'){
+        console.log(typeof(data))
         s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
             if (data){
                 console.log('data added')
