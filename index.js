@@ -29,8 +29,11 @@ s3.createBucket( {Bucket: bucket}, function (err, data) {
 
 // Send data to s3
 const sendToS3 = function (data) {
+   if (typeof(data) === 'object'){
+      data = JSON.stringify(data)
+   }
 
-    var date = new Date(Date.now()),
+      var date = new Date(Date.now()),
         millisecond = date.getUTCMilliseconds(),
         second = date.getUTCSeconds(),
         minute = date.getUTCMinutes(),
@@ -39,9 +42,11 @@ const sendToS3 = function (data) {
         month = date.getUTCMonth(),
         year = date.getUTCFullYear(),
         key = 'raw' + '/' + [year, month, day, hour, minute].join("/") + md5(data)
-    
+
     if(env.ENVIRONMENT !== 'local'){
-        console.log(typeof(data))
+          
+
+          
         s3.upload({ Bucket: bucket, Key: key, Body: data}, function (err, data) {
             if (data){
                 console.log('data added')
