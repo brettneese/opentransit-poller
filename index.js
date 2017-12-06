@@ -56,7 +56,7 @@ const sendToS3 = function (data) {
             Body: data
         }, function (err, data) {
             if (data) {
-                console.log('data added')
+                console.log('data added to ' + data.Location)
             }
 
             if (err) {
